@@ -26,23 +26,44 @@ class _GroceryListState extends State<GroceryList> {
 
   @override
   Widget build(BuildContext context) {
+    Widget content = const Center(
+      child: Text(
+        'No items added yet!',
+        style: TextStyle(fontSize: 20, color: Colors.grey),
+      ),
+    );
+    if (_groceryItems.isNotEmpty) {
+      content = ListView.builder(
+        itemCount: _groceryItems.length,
+        itemBuilder: (ctx, index) =>
+            ItemCard(groceryItem: _groceryItems[index]),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Grocery List'),
         actions: [IconButton(onPressed: _addItem, icon: Icon(Icons.add))],
       ),
-      body: ListView.builder(
-        itemCount: _groceryItems.length,
-        itemBuilder: (ctx, index) => ListTile(
-          title: Text(_groceryItems[index].name),
-          leading: Container(
-            width: 24,
-            height: 24,
-            color: _groceryItems[index].category.color,
-          ),
-          trailing: Text(_groceryItems[index].quantity.toString()),
-        ),
+      body: content,
+    );
+  }
+}
+
+class ItemCard extends StatelessWidget {
+  const ItemCard({super.key, required this.groceryItem});
+
+  final GroceryItem groceryItem;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(groceryItem.name),
+      leading: Container(
+        width: 24,
+        height: 24,
+        color: groceryItem.category.color,
       ),
+      trailing: Text(groceryItem.quantity.toString()),
     );
   }
 }
