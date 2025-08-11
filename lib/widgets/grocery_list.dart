@@ -24,6 +24,12 @@ class _GroceryListState extends State<GroceryList> {
     });
   }
 
+  void _removeItem(GroceryItem item) {
+    setState(() {
+      _groceryItems.remove(item);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget content = const Center(
@@ -35,8 +41,10 @@ class _GroceryListState extends State<GroceryList> {
     if (_groceryItems.isNotEmpty) {
       content = ListView.builder(
         itemCount: _groceryItems.length,
-        itemBuilder: (ctx, index) =>
-            ItemCard(groceryItem: _groceryItems[index]),
+        itemBuilder: (ctx, index) => ItemCard(
+          groceryItem: _groceryItems[index],
+          removeItem: _removeItem,
+        ),
       );
     }
     return Scaffold(
@@ -50,20 +58,31 @@ class _GroceryListState extends State<GroceryList> {
 }
 
 class ItemCard extends StatelessWidget {
-  const ItemCard({super.key, required this.groceryItem});
+  const ItemCard({
+    super.key,
+    required this.groceryItem,
+    required this.removeItem,
+  });
 
   final GroceryItem groceryItem;
+  final Function removeItem;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(groceryItem.name),
-      leading: Container(
-        width: 24,
-        height: 24,
-        color: groceryItem.category.color,
+    return Dismissible(
+      key: ValueKey(groceryItem.id),
+      onDismissed: (direction) {
+        removeItem(groceryItem);
+      },
+      child: ListTile(
+        title: Text(groceryItem.name),
+        leading: Container(
+          width: 24,
+          height: 24,
+          color: groceryItem.category.color,
+        ),
+        trailing: Text(groceryItem.quantity.toString()),
       ),
-      trailing: Text(groceryItem.quantity.toString()),
     );
   }
 }
