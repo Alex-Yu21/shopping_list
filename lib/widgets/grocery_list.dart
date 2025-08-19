@@ -47,7 +47,9 @@ class _GroceryListState extends State<GroceryList> {
         ),
       );
     }
-    _groceryItems = loadedItems;
+    setState(() {
+      _groceryItems = loadedItems;
+    });
   }
 
   void _addItem() async {
