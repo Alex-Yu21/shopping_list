@@ -36,6 +36,7 @@ class _GroceryListState extends State<GroceryList> {
       setState(() {
         _error = 'Failed to fetch a data. Please try again later';
       });
+      return;
     }
 
     final Map<String, dynamic> listData = json.decode(response.body);
@@ -79,11 +80,28 @@ class _GroceryListState extends State<GroceryList> {
     });
   }
 
-  void _removeItem(GroceryItem item) {
+  void _removeItem(GroceryItem item) async {
+    final index = _groceryItems.indexOf(item);
     setState(() {
       _groceryItems.remove(item);
-      _isLoading = false;
     });
+
+    final url = Uri.https(
+      '11111111shoppinglist-f0e87-default-rtdb.firebaseio.com',
+      'shopping-list/${item.id}.json',
+    );
+
+    final response = await http.delete(url);
+
+    if (response.statusCode >= 400) {
+      setState(() {
+        _groceryItems.insert(index, item);
+        String? e = 'Failed to delete. Try again later';
+        ScaffoldMessenger.of(context)
+          ..clearSnackBars()
+          ..showSnackBar(SnackBar(content: Text(e)));
+      });
+    }
   }
 
   @override
