@@ -16,6 +16,8 @@ class GroceryList extends StatefulWidget {
 class _GroceryListState extends State<GroceryList> {
   List<GroceryItem> _groceryItems = [];
 
+  var _isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -68,6 +70,7 @@ class _GroceryListState extends State<GroceryList> {
   void _removeItem(GroceryItem item) {
     setState(() {
       _groceryItems.remove(item);
+      _isLoading = false;
     });
   }
 
@@ -79,6 +82,11 @@ class _GroceryListState extends State<GroceryList> {
         style: TextStyle(fontSize: 20, color: Colors.grey),
       ),
     );
+
+    if (_isLoading) {
+      content = const Center(child: CircularProgressIndicator());
+    }
+
     if (_groceryItems.isNotEmpty) {
       content = ListView.builder(
         itemCount: _groceryItems.length,
